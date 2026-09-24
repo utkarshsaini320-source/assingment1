@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="A Pomodoro timer with work sessions, breaks, and custom intervals.">
+  <title>Pomodoro Timer — Focus Room</title>
+  <style>
+    /* Make width and height calculations easier to understand. */
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      min-height: 100vh;
+      margin: 0;
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      background-color: #f5f3ed;
+      color: #282d29;
+      font-family: Arial, Helvetica, sans-serif;
+    }
+
+    header,
+    footer {
+      width: 100%;
+      max-width: 900px;
+      margin: 0 auto;
+    }
+
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px 0;
+    }
+
+    .brand {
+      color: #282d29;
+      font-size: 18px;
+      font-weight: bold;
+      text-decoration: none;
+    }
+
+    .brand-mark {
+      display: inline-block;
+      margin-right: 8px;
+      padding: 7px 10px;
+      border-radius: 8px;
+      background-color: #ad5e4c;
+      color: white;
+    }
+
+    .header-note {
+      color: #747a73;
+      font-size: 13px;
+    }
+
+    main {
+      width: 100%;
+      max-width: 500px;
+      margin: auto;
+      padding: 48px 0;
+    }
+
+    .timer-card {
+      padding: 36px;
+      border: 1px solid #e4e1d8;
+      border-radius: 16px;
+      background-color: #fffefa;
+      text-align: center;
+      box-shadow: 0 8px 24px #282d2910;
+    }
+
+    .eyebrow {
+      margin: 0 0 10px;
+      color: #ad5e4c;
+      font-size: 12px;
+      font-weight: bold;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+    }
+
+    h1 {
+      margin: 0 0 22px;
+      font-size: 32px;
+    }
+
+    /* These buttons let you choose a work or break session. */
+    .session-tabs {
+      display: flex;
+      justify-content: center;
+      gap: 8px;
+      margin-bottom: 22px;
+    }
+
+    button {
+      font: inherit;
+    }
+
+    .session-button {
+      padding: 9px 14px;
+      border: 1px solid transparent;
+      border-radius: 20px;
+      background-color: transparent;
+      color: #747a73;
+      cursor: pointer;
+    }
+
+    .session-button.active {
+      border-color: #ead8d1;
+      background-color: #f8eeea;
+      color: #9a4f3f;
+      font-weight: bold;
+    }
+
+    /* The time display is updated by JavaScript. */
+    .time-display {
+      margin: 8px 0;
+      color: #282d29;
+      font-size: 88px;
+      font-weight: bold;
+      letter-spacing: 3px;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .session-message {
+      min-height: 22px;
+      margin: 0 0 24px;
+      color: #747a73;
+      font-size: 14px;
+    }
+
+    .timer-controls {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+    }
+
+    .control-button {
+      min-width: 104px;
+      padding: 12px 18px;
+      border: 1px solid #49634f;
+      border-radius: 7px;
+      background-color: #49634f;
+      color: white;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    .control-button:hover {
+      background-color: #354d3a;
+    }
+
+    .control-button.secondary {
+      border-color: #d9ded5;
+      background-color: white;
+      color: #3d5142;
+    }
+
+    .control-button.secondary:hover {
+      background-color: #f1f3ee;
+    }
+
+    /* Users can set their own work and break lengths here. */
+    .settings {
+      margin-top: 24px;
+      padding-top: 22px;
+      border-top: 1px solid #e9e7df;
+      text-align: left;
+    }
+
+    .settings h2 {
+      margin: 0 0 14px;
+      font-size: 15px;
+    }
+
+    .settings-fields {
+      display: flex;
+      gap: 14px;
+    }
+
+    .settings label {
+      flex: 1;
+      color: #626b63;
+      font-size: 12px;
+    }
+
+    .settings input {
+      width: 100%;
+      margin-top: 7px;
+      padding: 10px;
+      border: 1px solid #d9ded5;
+      border-radius: 6px;
+      background-color: white;
+      color: #282d29;
+      font: inherit;
+    }
+
+    .apply-button {
+      width: 100%;
+      margin-top: 14px;
+      padding: 10px;
+      border: 1px solid #d9ded5;
+      border-radius: 6px;
+      background-color: #f4f5f0;
+      color: #3d5142;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    .apply-button:hover {
+      background-color: #e9eee5;
+    }
+
+    .cycle-count {
+      margin: 20px 0 0;
+      color: #747a73;
+      font-size: 12px;
+    }
+
+    footer {
+      padding: 18px 0;
+      border-top: 1px solid #e1dfd6;
+      color: #747a73;
+      font-size: 12px;
+      text-align: center;
+    }
+
+    /* Stack controls neatly on narrow phone screens. */
+    @media (max-width: 500px) {
+      body {
+        padding: 16px;
+      }
+
+      .header-note {
+        font-size: 11px;
+      }
+
+      .timer-card {
+        padding: 26px 18px;
+      }
+
+      h1 {
+        font-size: 27px;
+      }
+
+      .time-display {
+        font-size: 68px;
+      }
+
+      .control-button {
+        min-width: 0;
+        flex: 1;
+        padding: 12px 10px;
+      }
+
+      .settings-fields {
+        flex-direction: column;
+        gap: 10px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <a class="brand" href="#timer"><span class="brand-mark">F</span>Focus Room</a>
+    <span class="header-note">One thing at a time.</span>
+  </header>
+
+  <main id="timer">
+    <section class="timer-card" aria-labelledby="page-title">
+      <p class="eyebrow">Pomodoro timer</p>
+      <h1 id="page-title">Make time for focus.</h1>
+
+      <div class="session-tabs" aria-label="Choose a timer session">
+        <button class="session-button active" id="work-tab" type="button">Focus</button>
+        <button class="session-button" id="short-tab" type="button">Short break</button>
+        <button class="session-button" id="long-tab" type="button">Long break</button>
+      </div>
+
+      <div class="time-display" id="time-display" role="timer" aria-live="off">25:00</div>
+      <p class="session-message" id="session-message" aria-live="polite">Ready when you are.</p>
+
+      <div class="timer-controls">
+        <button class="control-button" id="start-button" type="button">Start</button>
+        <button class="control-button secondary" id="reset-button" type="button">Reset</button>
+        <button class="control-button secondary" id="skip-button" type="button">Skip</button>
+      </div>
+
+      <form class="settings" id="settings-form">
+        <h2>Customize your intervals</h2>
+        <div class="settings-fields">
+          <label>Focus minutes
+            <input id="focus-input" type="number" min="1" max="180" value="25" required>
+          </label>
+          <label>Short break minutes
+            <input id="short-input" type="number" min="1" max="60" value="5" required>
+          </label>
+          <label>Long break minutes
+            <input id="long-input" type="number" min="1" max="90" value="15" required>
+          </label>
+        </div>
+        <button class="apply-button" type="submit">Apply intervals</button>
+      </form>
+
+      <p class="cycle-count">Focus sessions completed: <strong id="cycle-count">0</strong></p>
+    </section>
+  </main>
+
+  <footer>Focus in small steps. Take breaks. Repeat.</footer>
+
+  <script>
+    // Store the length of each session in minutes.
+    const sessionLengths = {
+      focus: 25,
+      short: 5,
+      long: 15
+    };
+
+    // Keep track of the current session and countdown time.
+    let currentSession = "focus";
+    let secondsLeft = sessionLengths.focus * 60;
+    let timerId = null;
+    let completedSessions = 0;
+
+    // Find the page elements that JavaScript needs to update.
+    const timeDisplay = document.getElementById("time-display");
+    const message = document.getElementById("session-message");
+    const startButton = document.getElementById("start-button");
+    const cycleCount = document.getElementById("cycle-count");
+    const sessionButtons = document.querySelectorAll(".session-button");
+
+    // Convert seconds to a clock format, such as 25:00.
+    function showTime() {
+      const minutes = Math.floor(secondsLeft / 60);
+      const seconds = secondsLeft % 60;
+      timeDisplay.textContent = String(minutes).padStart(2, "0") + ":" + String(seconds).padStart(2, "0");
+    }
+
+    // Stop the running timer and start the selected session from the beginning.
+    function chooseSession(sessionName) {
+      clearInterval(timerId);
+      timerId = null;
+      currentSession = sessionName;
+      secondsLeft = sessionLengths[sessionName] * 60;
+      startButton.textContent = "Start";
+      message.textContent = "Ready when you are.";
+
+      sessionButtons.forEach(function (button) {
+        button.classList.remove("active");
+      });
+      document.getElementById(sessionName + "-tab").classList.add("active");
+      showTime();
+    }
+
+    // Move to the next session when the timer ends or Skip is clicked.
+    function moveToNextSession() {
+      if (currentSession === "focus") {
+        completedSessions += 1;
+        cycleCount.textContent = completedSessions;
+
+        if (completedSessions % 4 === 0) {
+          chooseSession("long");
+          message.textContent = "Focus session done. Take a longer break.";
+        } else {
+          chooseSession("short");
+          message.textContent = "Focus session done. Take a short break.";
+        }
+      } else {
+        chooseSession("focus");
+        message.textContent = "Break complete. Ready to focus again?";
+      }
+    }
+
+    // Count down once every second.
+    function countDown() {
+      secondsLeft -= 1;
+      showTime();
+
+      if (secondsLeft <= 0) {
+        clearInterval(timerId);
+        timerId = null;
+        moveToNextSession();
+      }
+    }
+
+    startButton.addEventListener("click", function () {
+      if (timerId) {
+        clearInterval(timerId);
+        timerId = null;
+        startButton.textContent = "Start";
+        message.textContent = "Timer paused.";
+      } else {
+        timerId = setInterval(countDown, 1000);
+        startButton.textContent = "Pause";
+        message.textContent = currentSession === "focus" ? "Stay with one thing." : "Enjoy your break.";
+      }
+    });
+
+    document.getElementById("reset-button").addEventListener("click", function () {
+      chooseSession(currentSession);
+    });
+
+    document.getElementById("skip-button").addEventListener("click", function () {
+      clearInterval(timerId);
+      timerId = null;
+      moveToNextSession();
+    });
+
+    document.getElementById("work-tab").addEventListener("click", function () {
+      chooseSession("focus");
+    });
+
+    document.getElementById("short-tab").addEventListener("click", function () {
+      chooseSession("short");
+    });
+
+    document.getElementById("long-tab").addEventListener("click", function () {
+      chooseSession("long");
+    });
+
+    // Read the custom intervals from the form and update the timer.
+    document.getElementById("settings-form").addEventListener("submit", function (event) {
+      event.preventDefault();
+
+      sessionLengths.focus = Number(document.getElementById("focus-input").value);
+      sessionLengths.short = Number(document.getElementById("short-input").value);
+      sessionLengths.long = Number(document.getElementById("long-input").value);
+
+      chooseSession(currentSession);
+      message.textContent = "Your intervals have been updated.";
+    });
+
+    // Show the starting time as soon as the page opens.
+    showTime();
+  </script>
+</body>
+</html>
