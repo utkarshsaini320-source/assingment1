@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="A responsive landing page for a startup productivity platform.">
+  <title>Northstar — Make room for your best work</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --ink: #19251f;
+      --muted: #68756e;
+      --paper: #f7f8f4;
+      --green: #245b45;
+      --lime: #d7f36a;
+      --line: #dfe5dc;
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body { margin: 0; background: var(--paper); color: var(--ink); font-family: Arial, Helvetica, sans-serif; }
+    a { color: inherit; text-decoration: none; }
+    .container { width: min(1120px, calc(100% - 48px)); margin: 0 auto; }
+    .site-header { display: flex; align-items: center; justify-content: space-between; min-height: 78px; gap: 24px; }
+    .brand { display: inline-flex; align-items: center; gap: 10px; font-size: 20px; font-weight: 750; letter-spacing: -1px; }
+    .brand-mark { display: grid; width: 30px; height: 30px; place-items: center; border-radius: 10px 10px 10px 3px; background: var(--green); color: white; font-size: 16px; }
+    .nav-links { display: flex; align-items: center; gap: 30px; color: #435149; font-size: 14px; }
+    .button { display: inline-flex; justify-content: center; align-items: center; min-height: 48px; padding: 0 20px; border: 1px solid var(--green); border-radius: 8px; background: var(--green); color: white; font-size: 14px; font-weight: 700; transition: transform .2s, background .2s; }
+    .button:hover { transform: translateY(-2px); background: #174632; }
+    .button-light { border-color: var(--line); background: white; color: var(--ink); }
+    .button-light:hover { background: #f0f3ec; }
+    .hero { display: flex; align-items: center; gap: 56px; padding: 78px 0 92px; }
+    .hero-copy, .hero-art { flex: 1 1 0; min-width: 0; }
+    .eyebrow { display: inline-flex; align-items: center; gap: 8px; margin: 0 0 20px; color: var(--green); font-size: 12px; font-weight: 750; letter-spacing: 1.5px; text-transform: uppercase; }
+    .eyebrow::before { width: 7px; height: 7px; border-radius: 50%; background: #91b94b; content: ""; }
+    h1 { max-width: 600px; margin: 0; font-size: clamp(46px, 6.4vw, 76px); line-height: .99; letter-spacing: -5px; }
+    .hero-copy > p:not(.eyebrow) { max-width: 480px; margin: 23px 0 30px; color: var(--muted); font-size: 18px; line-height: 1.65; }
+    .hero-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; }
+    .note { margin: 16px 0 0; color: var(--muted); font-size: 12px; }
+    .hero-art { position: relative; min-height: 410px; display: flex; align-items: center; justify-content: center; overflow: hidden; border: 1px solid #e8ece4; border-radius: 24px; background: #e9efe3; }
+    .orbit { position: absolute; width: 310px; height: 310px; border: 1px solid rgba(36,91,69,.16); border-radius: 50%; }
+    .orbit::before, .orbit::after { position: absolute; inset: 28px; border: 1px solid rgba(36,91,69,.13); border-radius: 50%; content: ""; }
+    .orbit::after { inset: 60px; }
+    .sun { position: absolute; top: 45px; right: 65px; width: 82px; height: 82px; border-radius: 50%; background: var(--lime); }
+    .dashboard { z-index: 1; width: min(360px, 82%); padding: 22px; border: 1px solid rgba(25,37,31,.08); border-radius: 15px; background: white; box-shadow: 0 24px 70px rgba(31,64,45,.16); transform: rotate(-3deg); }
+    .dash-top { display: flex; justify-content: space-between; align-items: center; padding-bottom: 18px; border-bottom: 1px solid #edf0ea; font-size: 12px; font-weight: 700; }
+    .dash-dots { display: flex; gap: 5px; }
+    .dash-dots i { width: 7px; height: 7px; border-radius: 50%; background: #d9e0d6; }
+    .dash-label { margin: 20px 0 8px; color: var(--muted); font-size: 11px; }
+    .dash-title { margin: 0 0 16px; font-size: 24px; letter-spacing: -1px; }
+    .task { display: flex; align-items: center; gap: 10px; padding: 11px 0; border-top: 1px solid #f0f2ee; font-size: 12px; }
+    .check { display: grid; width: 17px; height: 17px; flex: 0 0 17px; place-items: center; border-radius: 5px; background: #e8f2dc; color: var(--green); font-size: 11px; }
+    .task:last-child .check { background: #f1f3ef; color: #9aa39b; }
+    .features { padding: 28px 0 78px; border-top: 1px solid var(--line); }
+    .features-heading { display: flex; align-items: end; justify-content: space-between; gap: 24px; margin-bottom: 28px; }
+    h2 { margin: 0; font-size: clamp(28px, 4vw, 40px); letter-spacing: -2px; }
+    .features-heading p { max-width: 370px; margin: 0; color: var(--muted); font-size: 14px; line-height: 1.6; }
+    .feature-list { display: flex; gap: 16px; }
+    .feature { flex: 1 1 0; padding: 22px; border: 1px solid var(--line); border-radius: 12px; background: white; }
+    .feature-icon { display: grid; width: 38px; height: 38px; place-items: center; border-radius: 11px; background: #edf4e6; color: var(--green); font-size: 19px; }
+    .feature h3 { margin: 17px 0 8px; font-size: 16px; }
+    .feature p { margin: 0; color: var(--muted); font-size: 13px; line-height: 1.6; }
+    .cta { display: flex; align-items: center; justify-content: space-between; gap: 24px; margin-bottom: 30px; padding: 30px 34px; border-radius: 16px; background: var(--green); color: white; }
+    .cta h2 { font-size: clamp(24px, 3.5vw, 34px); }
+    .cta p { margin: 7px 0 0; color: #d3e1d8; font-size: 14px; }
+    .cta .button { flex-shrink: 0; border-color: var(--lime); background: var(--lime); color: var(--ink); }
+    .site-footer { display: flex; justify-content: space-between; gap: 16px; padding: 24px 0 30px; border-top: 1px solid var(--line); color: var(--muted); font-size: 12px; }
+    .site-footer p { margin: 0; }
+    @media (max-width: 760px) {
+      .container { width: min(100% - 36px, 560px); }
+      .site-header { min-height: 68px; }
+      .nav-links { gap: 15px; }
+      .nav-links a:not(.button) { display: none; }
+      .nav-links .button { min-height: 40px; padding: 0 13px; font-size: 12px; }
+      .hero { flex-direction: column; align-items: stretch; gap: 36px; padding: 52px 0 62px; }
+      h1 { letter-spacing: -3px; }
+      .hero-copy > p:not(.eyebrow) { font-size: 16px; }
+      .hero-art { flex: none; min-height: 330px; }
+      .orbit { width: 260px; height: 260px; }
+      .sun { top: 32px; right: 40px; width: 65px; height: 65px; }
+      .features-heading { align-items: start; flex-direction: column; }
+      .feature-list { flex-direction: column; }
+      .feature { display: flex; align-items: flex-start; gap: 15px; }
+      .feature-icon { flex: 0 0 38px; }
+      .feature h3 { margin: 1px 0 6px; }
+      .cta { align-items: flex-start; flex-direction: column; padding: 26px; }
+      .site-footer { flex-direction: column; }
+    }
+    @media (max-width: 380px) {
+      .brand { font-size: 18px; }
+      .hero-actions .button { width: 100%; }
+      .hero-art { min-height: 285px; }
+      .dashboard { padding: 17px; }
+    }
+  </style>
+</head>
+<body>
+  <header class="site-header container">
+    <a class="brand" href="#home" aria-label="Northstar home"><span class="brand-mark" aria-hidden="true">N</span>northstar</a>
+    <nav class="nav-links" aria-label="Main navigation">
+      <a href="#features">Features</a>
+      <a href="#about">About</a>
+      <a class="button" href="#get-started">Get started <span aria-hidden="true">&nbsp;↗</span></a>
+    </nav>
+  </header>
+  <main id="home" class="container">
+    <section class="hero" aria-labelledby="hero-title">
+      <div class="hero-copy">
+        <p class="eyebrow">A calmer way to work</p>
+        <h1 id="hero-title">Make room for your best work.</h1>
+        <p>Northstar brings your projects, priorities, and people together, so your team can spend less time juggling and more time moving forward.</p>
+        <div class="hero-actions"><a class="button" href="#get-started">Start for free <span aria-hidden="true">&nbsp;→</span></a><a class="button button-light" href="#features">See how it works</a></div>
+        <p class="note">Free to start · No credit card required</p>
+      </div>
+      <div class="hero-art" role="img" aria-label="Illustration of a team project dashboard">
+        <div class="orbit" aria-hidden="true"></div><div class="sun" aria-hidden="true"></div>
+        <div class="dashboard" aria-hidden="true">
+          <div class="dash-top"><span>◎ &nbsp; Project space</span><span class="dash-dots"><i></i><i></i><i></i></span></div>
+          <p class="dash-label">MONDAY, OCTOBER 12</p><h2 class="dash-title">A good week starts here.</h2>
+          <div class="task"><span class="check">✓</span><span>Plan the launch story</span></div>
+          <div class="task"><span class="check">✓</span><span>Review new signups</span></div>
+          <div class="task"><span class="check">•</span><span>Share progress with the team</span></div>
+        </div>
+      </div>
+    </section>
+    <section class="features" id="features" aria-labelledby="features-title">
+      <div class="features-heading"><h2 id="features-title">Everything in sync.</h2><p>Simple tools that help good teams stay focused, aligned, and ready for what’s next.</p></div>
+      <div class="feature-list">
+        <article class="feature"><span class="feature-icon" aria-hidden="true">↗</span><div><h3>Clear priorities</h3><p>See what matters today and keep the important work moving.</p></div></article>
+        <article class="feature"><span class="feature-icon" aria-hidden="true">◇</span><div><h3>One shared space</h3><p>Bring conversations, plans, and project details together.</p></div></article>
+        <article class="feature"><span class="feature-icon" aria-hidden="true">✳</span><div><h3>More momentum</h3><p>Turn small wins into steady progress your whole team can see.</p></div></article>
+      </div>
+    </section>
+    <section class="cta" id="get-started" aria-labelledby="cta-title"><div><h2 id="cta-title">Your next great idea starts here.</h2><p>Get your team in sync today.</p></div><a class="button" href="mailto:hello@northstar.example">Try Northstar free <span aria-hidden="true">&nbsp;→</span></a></section>
+  </main>
+  <footer class="site-footer container" id="about"><p>© 2026 Northstar. Built for better work.</p><p>Simple plans · Made for teams</p></footer>
+</body>
+</html>
